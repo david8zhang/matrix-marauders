@@ -25,6 +25,21 @@ public class Tile {
         pane.setTranslateY(y * tileSize);
     }
 
+    public Tile(int x, int y, int tileSize, String color) {
+        pane = new StackPane();
+        Rectangle tileRect = new Rectangle(tileSize, tileSize);
+        tileRect.setStroke(Color.rgb(0, 0, 0, 0.2));
+        tileRect.setFill(Paint.valueOf(color));
+        pane.getChildren().addAll(tileRect);
+
+        this.x = x;
+        this.y = y;
+        this.tileSize = tileSize;
+
+        pane.setTranslateX(x * tileSize);
+        pane.setTranslateY(y * tileSize);
+    }
+
     public int getX() {
         return this.x;
     }
