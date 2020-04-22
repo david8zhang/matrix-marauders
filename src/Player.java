@@ -3,6 +3,12 @@ public class Player extends Ship {
         super(x, y, tileSize, "https://vignette.wikia.nocookie.net/scribblenauts/images/2/2f/Pirate_Ship_SU.png/revision/latest/scale-to-width-down/340?cb=20130224173139");
     }
 
+    public Tile getTileToMoveTo(int xDirection, int yDirection, Tile[][] tiles) {
+        int newX = restrictBounds(this.x + xDirection, 0, tiles.length - 1);
+        int newY = restrictBounds(this.y + yDirection, 0, tiles[0].length - 1);
+        return tiles[newX][newY];
+    }
+
     @Override
     public void move(int xDirection, int yDirection, Tile[][] tiles) {
         int newX = restrictBounds(this.x + xDirection, 0, tiles.length - 1);

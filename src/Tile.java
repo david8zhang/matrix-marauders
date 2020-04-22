@@ -9,23 +9,9 @@ public class Tile {
     int x;
     int y;
     int tileSize;
+    String type;
 
-    public Tile(int x, int y, int tileSize) {
-        pane = new StackPane();
-        Rectangle tileRect = new Rectangle(tileSize, tileSize);
-        tileRect.setStroke(Color.rgb(0, 0, 0, 0.2));
-        tileRect.setFill(Paint.valueOf(DEFAULT_COLOR));
-        pane.getChildren().addAll(tileRect);
-
-        this.x = x;
-        this.y = y;
-        this.tileSize = tileSize;
-
-        pane.setTranslateX(x * tileSize);
-        pane.setTranslateY(y * tileSize);
-    }
-
-    public Tile(int x, int y, int tileSize, String color) {
+    public Tile(int x, int y, int tileSize, String type, String color) {
         pane = new StackPane();
         Rectangle tileRect = new Rectangle(tileSize, tileSize);
         tileRect.setStroke(Color.rgb(0, 0, 0, 0.2));
@@ -34,10 +20,19 @@ public class Tile {
 
         this.x = x;
         this.y = y;
+        this.type = type;
         this.tileSize = tileSize;
 
         pane.setTranslateX(x * tileSize);
         pane.setTranslateY(y * tileSize);
+    }
+
+    public Tile(int x, int y, int tileSize) {
+        this(x, y, tileSize, "Default", DEFAULT_COLOR);
+    }
+
+    public Tile(int x, int y, int tileSize, String type) {
+        this(x, y, tileSize, type, DEFAULT_COLOR);
     }
 
     public int getX() {
@@ -47,6 +42,8 @@ public class Tile {
     public int getY() {
         return this.y;
     }
+
+    public String getType() { return this.type; }
 
     public void setX(int x) {
         this.x = x;

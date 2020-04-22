@@ -5,7 +5,7 @@ public class BattleScene extends GameScene {
     SceneManager sceneManager;
     BattleGrid battleGrid;
 
-    private static final int TILE_SIZE = 40;
+    private static final int TILE_SIZE = 20;
     private static final int BOARD_HEIGHT = 600;
     private static final int BOARD_WIDTH = 800;
 

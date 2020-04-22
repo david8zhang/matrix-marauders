@@ -1,7 +1,3 @@
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +62,7 @@ public class OceanBoard extends Board {
         for (Merchant m : this.merchantList) {
             int merchantX = m.getX();
             int merchantY = m.getY();
-            if (merchantX == playerX && playerY == merchantY) {
+            if (merchantX == playerX && merchantY == playerY) {
                 return true;
             }
         }
@@ -89,9 +85,9 @@ public class OceanBoard extends Board {
         int oldX = player.getX();
         int oldY = player.getY();
         player.move(xDirection, yDirection, this.tiles);
-        this.updateItemBoardPos(new int[] { oldX, oldY }, player);
-        if (this.didPlayerCollideWithMerchant()) {
-            shouldTransitionScene = true;
+        this.updateItemBoardPos(new int[]{oldX, oldY}, player);
+        if (didPlayerCollideWithMerchant()) {
+            this.shouldTransitionScene = true;
         }
     }
 }

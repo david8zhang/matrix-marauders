@@ -15,7 +15,7 @@ public class Merchant extends Ship {
         for (int[] dir: shuffledDirections) {
             int nextX = restrictBounds(this.x + dir[0], 0, tiles.length - 1);
             int nextY = restrictBounds(this.y + dir[1], 0, tiles[0].length - 1);
-            if (!(tiles[nextX][nextY] instanceof Merchant)) {
+            if (!tiles[nextX][nextY].getType().equals("Ship")) {
                 super.move(nextX, nextY, tiles);
                 return;
             }
