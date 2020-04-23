@@ -2,6 +2,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public class OverworldScene extends GameScene {
     private static final int TILE_SIZE = 40;
@@ -56,7 +57,7 @@ public class OverworldScene extends GameScene {
 
     private void update(Scene scene) {
         if (oceanBoard.getShouldTransitionScene()) {
-            sceneManager.showScene("Battle");
+            // Do something here
         } else {
             scene.setRoot(renderBoard());
         }

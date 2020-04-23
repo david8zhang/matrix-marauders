@@ -1,3 +1,7 @@
+import javafx.geometry.Pos;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,11 +10,14 @@ public class OceanBoard extends Board {
     private int maxMerchantCount = 3;
     private List<Merchant> merchantList = new ArrayList<>();
     private boolean shouldTransitionScene = false;
+    private boolean shouldShowCollidedAlert = false;
+    private StackPane modalPane;
 
     public OceanBoard(int numXTiles, int numYTiles, int tileSize) {
         super(numXTiles, numYTiles, tileSize);
         this.initializeBoardState();
         this.addPlayer();
+        modalPane = new Modal("You have collided with a merchant!").getPane();
     }
 
     public void spawnMerchant(Tile[][] tiles, int i, int j) {
@@ -23,7 +30,6 @@ public class OceanBoard extends Board {
     public void spawnOceanTile(Tile[][] tiles, int i, int j) {
         tiles[i][j] = new Tile(i, j, this.tileSize);
     }
-
 
     @Override
     public void initializeBoardState() {
@@ -51,8 +57,11 @@ public class OceanBoard extends Board {
         for (Merchant m : this.merchantList) {
             int oldX = m.getX();
             int oldY = m.getY();
-            m.move(this.tiles);
-            this.updateItemBoardPos(new int[] { oldX, oldY }, m);
+            boolean shouldMove = (int)((Math.random() * 100) + 1) <= 50;
+            if (shouldMove) {
+                m.move(this.tiles);
+                this.updateItemBoardPos(new int[] { oldX, oldY }, m);
+            }
         }
     }
 
@@ -87,7 +96,18 @@ public class OceanBoard extends Board {
         player.move(xDirection, yDirection, this.tiles);
         this.updateItemBoardPos(new int[]{oldX, oldY}, player);
         if (didPlayerCollideWithMerchant()) {
-            this.shouldTransitionScene = true;
+            this.shouldShowCollidedAlert = true;
         }
+    }
+
+    @Override
+    public Pane getBoard() {
+        StackPane wrapper = new StackPane();
+        Pane pane = super.getBoard();
+        wrapper.getChildren().addAll(pane);
+        if (this.shouldShowCollidedAlert) {
+            wrapper.getChildren().addAll(modalPane);
+        }
+        return wrapper;
     }
 }
