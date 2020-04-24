@@ -1,4 +1,5 @@
-import javafx.geometry.Pos;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -13,11 +14,16 @@ public class OceanBoard extends Board {
     private boolean shouldShowCollidedAlert = false;
     private StackPane modalPane;
 
-    public OceanBoard(int numXTiles, int numYTiles, int tileSize) {
+    public OceanBoard(int numXTiles, int numYTiles, int tileSize, Callback cmd) {
         super(numXTiles, numYTiles, tileSize);
         this.initializeBoardState();
         this.addPlayer();
-        modalPane = new Modal("You have collided with a merchant!").getPane();
+        modalPane = new Modal("You have collided with a merchant!", "Go to battle!", new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                cmd.execute();
+            }
+        }).getPane();
     }
 
     public void spawnMerchant(Tile[][] tiles, int i, int j) {
@@ -105,8 +111,9 @@ public class OceanBoard extends Board {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
         wrapper.getChildren().addAll(pane);
+        wrapper.getChildren().addAll(modalPane);
         if (this.shouldShowCollidedAlert) {
-            wrapper.getChildren().addAll(modalPane);
+            modalPane.setVisible(true);
         }
         return wrapper;
     }

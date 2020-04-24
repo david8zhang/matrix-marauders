@@ -2,7 +2,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 
 public class OverworldScene extends GameScene {
     private static final int TILE_SIZE = 40;
@@ -18,7 +17,12 @@ public class OverworldScene extends GameScene {
     public OverworldScene(SceneManager sceneManager) {
         super("Overworld");
         this.sceneManager = sceneManager;
-        oceanBoard = new OceanBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE);
+        oceanBoard = new OceanBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE, new Callback() {
+            @Override
+            public void execute() {
+                sceneManager.showScene("Battle");
+            }
+        });
     }
 
     private Pane renderBoard() {
@@ -57,7 +61,7 @@ public class OverworldScene extends GameScene {
 
     private void update(Scene scene) {
         if (oceanBoard.getShouldTransitionScene()) {
-            // Do something here
+            sceneManager.showScene("Battle");
         } else {
             scene.setRoot(renderBoard());
         }
