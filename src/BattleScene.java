@@ -1,9 +1,12 @@
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 
 public class BattleScene extends GameScene {
     SceneManager sceneManager;
-    BattleGrid battleGrid;
+    BattleBoard battleBoard;
 
     private static final int TILE_SIZE = 20;
     private static final int BOARD_HEIGHT = 600;
@@ -15,17 +18,35 @@ public class BattleScene extends GameScene {
     public BattleScene(SceneManager sceneManager) {
         super("Battle");
         this.sceneManager = sceneManager;
-        battleGrid = new BattleGrid(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE);
+        battleBoard = new BattleBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE);
     }
 
     private Pane renderBoard() {
-        Pane root = battleGrid.getBoard();
+        Pane root = battleBoard.getBoard();
         root.setMinHeight(BOARD_HEIGHT);
         root.setPrefSize(BOARD_WIDTH, BOARD_HEIGHT);
         return root;
     }
 
     public Scene getScene() {
-        return new Scene(renderBoard());
+        Scene scene = new Scene(renderBoard());
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.SPACE) {
+                    battleBoard.handleReticleStop(new Callback() {
+                        @Override
+                        public void execute() {
+                            update(scene);
+                        }
+                    });
+                }
+            }
+        });
+        return scene;
+    }
+
+    public void update(Scene scene) {
+        scene.setRoot(renderBoard());
     }
 }

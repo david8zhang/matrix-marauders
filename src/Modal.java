@@ -11,12 +11,19 @@ public class Modal {
     private StackPane pane;
     private static final int MODAL_HEIGHT = 100;
     private static final int MODAL_WIDTH = 300;
+    private Label textLabel;
+    private Button button;
+
     public Modal(String content, String buttonText, EventHandler<MouseEvent> eventHandler) {
         pane = new StackPane();
 
-        Label textLabel = new Label(content);
+        textLabel = new Label(content);
         textLabel.setPadding(new Insets(0, 0, 10, 0));
-        Button button = new Button();
+        textLabel.setWrapText(true);
+        textLabel.setMaxWidth(MODAL_WIDTH - 20);
+        textLabel.setAlignment(Pos.CENTER);
+
+        button = new Button();
         button.setText(buttonText);
         button.setOnMouseClicked(eventHandler);
 
@@ -34,11 +41,31 @@ public class Modal {
         pane.setVisible(false);
     }
 
+    public Modal() {
+        this("", "", new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                System.out.println("Default!");
+            }
+        });
+    }
+
     public StackPane getPane() {
         return pane;
     }
 
     public void showModal() {
         pane.setVisible(true);
+    }
+
+    public void showModal(String message, String buttonMessage, EventHandler<MouseEvent> eventHandler) {
+        textLabel.setText(message);
+        button.setText(buttonMessage);
+        button.setOnMouseClicked(eventHandler);
+        pane.setVisible(true);
+    }
+
+    public void closeModal() {
+        pane.setVisible(false);
     }
 }
