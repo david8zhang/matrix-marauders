@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Merchant extends Ship {
     public Merchant(int x, int y, int tileSize) {
-        super(x, y, tileSize, "https://vignette.wikia.nocookie.net/scribblenauts/images/0/02/Cargo_Ship_SU.png/revision/latest/scale-to-width-down/340?cb=20130224164346");
+        super(x, y, tileSize, "https://firebasestorage.googleapis.com/v0/b/matrix-marauders.appspot.com/o/merchant-ship.png?alt=media&token=d6f22220-12d1-4d79-b1da-4345d046befb");
     }
 
     public void move(Tile[][] tiles) {

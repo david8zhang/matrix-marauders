@@ -1,6 +1,6 @@
 public class Player extends Ship {
     public Player(int x, int y, int tileSize) {
-        super(x, y, tileSize, "https://vignette.wikia.nocookie.net/scribblenauts/images/2/2f/Pirate_Ship_SU.png/revision/latest/scale-to-width-down/340?cb=20130224173139");
+        super(x, y, tileSize, "https://firebasestorage.googleapis.com/v0/b/matrix-marauders.appspot.com/o/pirate-ship.png?alt=media&token=4f308796-3770-470f-835a-6265a7b8e979");
     }
 
     public Tile getTileToMoveTo(int xDirection, int yDirection, Tile[][] tiles) {

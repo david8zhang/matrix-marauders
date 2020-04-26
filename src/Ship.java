@@ -8,8 +8,6 @@ public class Ship extends Tile {
     public Ship(int x, int y, int tileSize, String imageUrl, String type) {
         super(x, y, tileSize, type);
         ImageView imageView = new ImageView(imageUrl);
-        imageView.setFitWidth(tileSize);
-        imageView.setFitHeight(tileSize);
         pane.getChildren().addAll(imageView);
     }
 
