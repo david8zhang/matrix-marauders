@@ -1,3 +1,4 @@
+import UIElements.HealthBar;
 import javafx.scene.paint.Color;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,7 +72,11 @@ public class MerchantGrid {
     private Set<String> weakPoints;
     private Set<String> shipPoints;
     private int tileSize;
-    private int health = 100;
+    private double health = 100;
+    private double currHealth = 100;
+
+    private HealthBar healthBar;
+
     private Tile[][] tiles;
 
     public MerchantGrid(int numXTiles, int numYTiles, int tileSize) {
@@ -79,6 +84,7 @@ public class MerchantGrid {
         this.tileSize = tileSize;
         this.weakPoints = new HashSet();
         this.shipPoints = new HashSet();
+        this.healthBar = new HealthBar(this.health, this.currHealth, "Merchant Health");
         this.initMerchantBoard();
     }
 
@@ -121,6 +127,9 @@ public class MerchantGrid {
         return isCriticalHit;
     }
 
+    public HealthBar getHealthBar() {
+        return healthBar;
+    }
 
     public String getDamageMessage(int[] target) {
         if (!isHit(target)) {
@@ -137,6 +146,7 @@ public class MerchantGrid {
     public void takeDamage(int [] target) {
         int damage = calculateDamage(target);
         this.health -= damage;
+        this.healthBar.takeDamage(damage);
     }
 
     public void spawnShipTile(int j, int i, int[] pixel) {
@@ -155,6 +165,14 @@ public class MerchantGrid {
             }
         }
         this.weakPoints.clear();
+    }
+
+    public double currHealth() {
+        return this.currHealth;
+    }
+
+    public double health() {
+        return this.health;
     }
 
     public void spawnWeakPoints() {

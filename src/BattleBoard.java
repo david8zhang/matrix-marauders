@@ -1,3 +1,5 @@
+import UIElements.HealthBar;
+import UIElements.Modal;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -7,7 +9,7 @@ public class BattleBoard extends Board {
     private MerchantGrid merchantGrid;
     private Reticle reticle;
     private Modal alertModal;
-
+    private HealthBar healthBar;
     public BattleBoard(int numXTiles, int numYTiles, int tileSize) {
         super(numXTiles, numYTiles, tileSize);
         merchantGrid = new MerchantGrid(numXTiles, numYTiles, tileSize);
@@ -18,14 +20,14 @@ public class BattleBoard extends Board {
     public Pane getBoard() {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
-        wrapper.getChildren().addAll(pane);
-        wrapper.getChildren().addAll(alertModal.getPane());
+        wrapper.getChildren().addAll(pane, healthBar.getPane(), alertModal.getPane());
         return wrapper;
     }
 
     @Override
     public void initializeBoardState() {
         alertModal = new Modal();
+        healthBar = merchantGrid.getHealthBar();
         Tile[][] merchantTiles = merchantGrid.getBoardState();
         reticle = new Reticle(merchantTiles);
         this.tiles = merchantTiles;
