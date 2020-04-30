@@ -69,22 +69,29 @@ public class MerchantGrid {
             {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}},
     };
 
-    private Set<String> weakPoints;
-    private Set<String> shipPoints;
+    private HashSet<String> weakPoints;
+    private HashSet<String> shipPoints;
     private int tileSize;
-    private double health = 100;
-    private double currHealth = 100;
-
+    private double maxHealth = 20;
+    private double currHealth = 20;
+    private Callback onVictory;
     private HealthBar healthBar;
 
     private Tile[][] tiles;
 
-    public MerchantGrid(int numXTiles, int numYTiles, int tileSize) {
+    public MerchantGrid(int numXTiles, int numYTiles, int tileSize, Callback onVictory) {
         this.tiles = new Tile[numXTiles][numYTiles];
         this.tileSize = tileSize;
         this.weakPoints = new HashSet();
         this.shipPoints = new HashSet();
-        this.healthBar = new HealthBar(this.health, this.currHealth, "Merchant Health");
+        this.healthBar = new HealthBar(this.maxHealth, this.currHealth, "Merchant Health");
+        this.onVictory = onVictory;
+        this.initMerchantBoard();
+    }
+
+    public void reset() {
+        this.currHealth = this.maxHealth;
+        this.healthBar.setCurrHealth(this.maxHealth);
         this.initMerchantBoard();
     }
 
@@ -105,7 +112,7 @@ public class MerchantGrid {
     }
 
     private int calculateDamage(int[] target) {
-        if (!isHit(target)) {
+        if (isMissed(target)) {
             return 0;
         }
         if (isCriticalHit(target)) {
@@ -115,16 +122,18 @@ public class MerchantGrid {
         }
     }
 
-    public boolean isHit(int[] target) {
+    public boolean isMissed(int[] target) {
         String stringifiedTarget = stringifyCoordinates(target);
-        boolean isHit = this.shipPoints.contains(stringifiedTarget);
-        return isHit;
+        return !this.shipPoints.contains(stringifiedTarget);
     }
 
     public boolean isCriticalHit(int[] target) {
         String stringifiedTarget = stringifyCoordinates(target);
-        boolean isCriticalHit = this.weakPoints.contains(stringifiedTarget);
-        return isCriticalHit;
+        return this.weakPoints.contains(stringifiedTarget);
+    }
+
+    public boolean isDead() {
+        return currHealth == 0;
     }
 
     public HealthBar getHealthBar() {
@@ -132,7 +141,7 @@ public class MerchantGrid {
     }
 
     public String getDamageMessage(int[] target) {
-        if (!isHit(target)) {
+        if (isMissed(target)) {
             return "You missed!";
         }
         String result = "";
@@ -145,8 +154,14 @@ public class MerchantGrid {
 
     public void takeDamage(int [] target) {
         int damage = calculateDamage(target);
-        this.health -= damage;
+        this.currHealth -= damage;
+        if (this.currHealth < 0) {
+            this.currHealth = 0;
+        }
         this.healthBar.takeDamage(damage);
+        if (this.currHealth == 0) {
+            this.onVictory.execute();
+        }
     }
 
     public void spawnShipTile(int j, int i, int[] pixel) {
@@ -165,14 +180,6 @@ public class MerchantGrid {
             }
         }
         this.weakPoints.clear();
-    }
-
-    public double currHealth() {
-        return this.currHealth;
-    }
-
-    public double health() {
-        return this.health;
     }
 
     public void spawnWeakPoints() {

@@ -4,8 +4,13 @@ import javafx.scene.layout.StackPane;
 public class Board {
     protected Tile[][] tiles;
     protected int tileSize;
+    protected int numXTiles;
+    protected int numYTiles;
+
     public Board(int numXTiles, int numYTiles, int tileSize) {
         tiles = new Tile[numXTiles][numYTiles];
+        this.numXTiles = numXTiles;
+        this.numYTiles = numYTiles;
         this.tileSize = tileSize;
     }
 

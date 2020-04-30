@@ -10,17 +10,18 @@ public class OverworldScene extends GameScene {
 
     private static final int NUM_X_TILES = BOARD_WIDTH / TILE_SIZE;
     private static final int NUM_Y_TILES = BOARD_HEIGHT / TILE_SIZE;
-    private SceneManager sceneManager;
+    private Scene scene;
 
     private OceanBoard oceanBoard;
 
     public OverworldScene(SceneManager sceneManager) {
         super("Overworld");
-        this.sceneManager = sceneManager;
         oceanBoard = new OceanBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE, new Callback() {
             @Override
             public void execute() {
                 sceneManager.showScene("Battle");
+                oceanBoard.reset();
+                update();
             }
         });
     }
@@ -33,7 +34,7 @@ public class OverworldScene extends GameScene {
     }
 
     public Scene getScene() {
-        Scene scene = new Scene(renderBoard());
+        scene = new Scene(renderBoard());
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -53,17 +54,13 @@ public class OverworldScene extends GameScene {
                     default:
                         break;
                 }
-                update(scene);
+                update();
             }
         });
         return scene;
     }
 
-    private void update(Scene scene) {
-        if (oceanBoard.getShouldTransitionScene()) {
-            sceneManager.showScene("Battle");
-        } else {
-            scene.setRoot(renderBoard());
-        }
+    private void update() {
+        scene.setRoot(renderBoard());
     }
 }

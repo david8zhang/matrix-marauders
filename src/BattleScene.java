@@ -14,11 +14,24 @@ public class BattleScene extends GameScene {
 
     private static final int NUM_X_TILES = BOARD_WIDTH / TILE_SIZE;
     private static final int NUM_Y_TILES = BOARD_HEIGHT / TILE_SIZE;
+    private Scene scene;
 
     public BattleScene(SceneManager sceneManager) {
         super("Battle");
         this.sceneManager = sceneManager;
-        battleBoard = new BattleBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE);
+        battleBoard = new BattleBoard(NUM_X_TILES, NUM_Y_TILES, TILE_SIZE, new Callback() {
+            @Override
+            public void execute() {
+                sceneManager.showScene("Overworld");
+            }
+        });
+
+        battleBoard.attachUpdateCallback(new Callback() {
+            @Override
+            public void execute() {
+                update();
+            }
+        });
     }
 
     private Pane renderBoard() {
@@ -29,24 +42,19 @@ public class BattleScene extends GameScene {
     }
 
     public Scene getScene() {
-        Scene scene = new Scene(renderBoard());
+        scene = new Scene(renderBoard());
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.SPACE) {
-                    battleBoard.handleReticleStop(new Callback() {
-                        @Override
-                        public void execute() {
-                            update(scene);
-                        }
-                    });
+                    battleBoard.handleReticleStop();
                 }
             }
         });
         return scene;
     }
 
-    public void update(Scene scene) {
+    public void update() {
         scene.setRoot(renderBoard());
     }
 }

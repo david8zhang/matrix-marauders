@@ -9,32 +9,52 @@ public class BattleBoard extends Board {
     private MerchantGrid merchantGrid;
     private Reticle reticle;
     private Modal alertModal;
+    private Modal victoryModal;
     private HealthBar healthBar;
-    public BattleBoard(int numXTiles, int numYTiles, int tileSize) {
+    private Callback onGoToOverworldScene;
+    private Callback updateCallback;
+
+
+    public BattleBoard(int numXTiles, int numYTiles, int tileSize, Callback onGoToOverworldScene) {
         super(numXTiles, numYTiles, tileSize);
-        merchantGrid = new MerchantGrid(numXTiles, numYTiles, tileSize);
+        this.onGoToOverworldScene = onGoToOverworldScene;
+        this.initMerchantGrid();
         this.initializeBoardState();
+        reticle.start();
     }
 
     @Override
     public Pane getBoard() {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
-        wrapper.getChildren().addAll(pane, healthBar.getPane(), alertModal.getPane());
+        wrapper.getChildren().addAll(pane, healthBar.getPane(), alertModal.getPane(), victoryModal.getPane());
         return wrapper;
     }
 
     @Override
     public void initializeBoardState() {
         alertModal = new Modal();
+        victoryModal = new Modal();
         healthBar = merchantGrid.getHealthBar();
         Tile[][] merchantTiles = merchantGrid.getBoardState();
         reticle = new Reticle(merchantTiles);
         this.tiles = merchantTiles;
-        reticle.start();
     }
 
-    public void showDamageModal(int[] target, Callback updateCallback) {
+    public void attachUpdateCallback(Callback updateCallback) {
+        this.updateCallback = updateCallback;
+    }
+
+    public void initMerchantGrid() {
+        merchantGrid = new MerchantGrid(numXTiles, numYTiles, tileSize, new Callback() {
+            @Override
+            public void execute() {
+                showOnVictoryModal();
+            }
+        });
+    }
+
+    public void showDamageModal(int[] target) {
         String message = merchantGrid.getDamageMessage(target);
         alertModal.showModal(message, "OK", new EventHandler<MouseEvent>() {
             @Override
@@ -42,17 +62,39 @@ public class BattleBoard extends Board {
                 alertModal.closeModal();
                 merchantGrid.takeDamage(target);
                 merchantGrid.spawnWeakPoints();
-                resetReticles();
-                updateCallback.execute();
+                if (!merchantGrid.isDead()) {
+                    resetReticles();
+                    updateCallback.execute();
+                }
             }
         });
     }
 
-    public void handleReticleStop(Callback updateCallback) {
+    public void showOnVictoryModal() {
+        victoryModal.showModal("You defeated the merchant ship!", "OK", new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                resetBoard();
+                onGoToOverworldScene.execute();
+            }
+        });
+    }
+
+    public void resetBoard() {
+        victoryModal.closeModal();
+        merchantGrid.reset();
+        Tile[][] merchantTiles = merchantGrid.getBoardState();
+        reticle = new Reticle(merchantTiles);
+        tiles = merchantTiles;
+        reticle.start();
+        updateCallback.execute();
+    }
+
+    public void handleReticleStop() {
         reticle.handleReticleStop();
         if (reticle.isFinishedAiming()) {
             int[] target = reticle.getReticleIntersection();
-            showDamageModal(target, updateCallback);
+            showDamageModal(target);
         }
     }
 

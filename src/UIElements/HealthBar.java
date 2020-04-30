@@ -53,8 +53,16 @@ public class HealthBar {
         pane.setAlignment(Pos.TOP_LEFT);
     }
 
-    public boolean isDead() {
-        return this.currHealth == 0;
+    public void setCurrHealth(double health) {
+        this.currHealth = health;
+        this.updateHealthFillRect();
+    }
+
+    public void updateHealthFillRect() {
+        double healthPercentage = currHealth / health;
+        healthFillRect.setWidth((int)(HEALTH_BAR_LENGTH * healthPercentage));
+        String healthRatio = this.healthLabelText + ": " + (int)currHealth + "/" + (int)health;
+        healthLabel.setText(healthRatio);
     }
 
     public void takeDamage(int damage) {
@@ -62,11 +70,7 @@ public class HealthBar {
         if (this.currHealth < 0) {
             this.currHealth = 0;
         }
-        double healthPercentage = currHealth / health;
-        healthFillRect.setWidth((int)(HEALTH_BAR_LENGTH * healthPercentage));
-        String healthRatio = this.healthLabelText + ": " + (int)currHealth + "/" + (int)health;
-        healthLabel.setText(healthRatio);
-
+        this.updateHealthFillRect();
     }
 
     public Pane getPane() {

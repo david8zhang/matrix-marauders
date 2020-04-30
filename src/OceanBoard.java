@@ -10,39 +10,46 @@ import java.util.List;
 public class OceanBoard extends Board {
     private Player player;
     private int maxMerchantCount = 3;
+    private int currMerchantCount = 0;
     private List<Merchant> merchantList = new ArrayList<>();
-    private boolean shouldTransitionScene = false;
-    private boolean shouldShowCollidedAlert = false;
-    private StackPane modalPane;
+    private Modal collisionModal;
 
     public OceanBoard(int numXTiles, int numYTiles, int tileSize, Callback cmd) {
         super(numXTiles, numYTiles, tileSize);
         this.initializeBoardState();
         this.addPlayer();
-        modalPane = new Modal("You have collided with a merchant!", "Go to battle!", new EventHandler<MouseEvent>() {
+        collisionModal = new Modal("You have collided with a merchant!", "Go to battle!", new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 cmd.execute();
             }
-        }).getPane();
+        });
     }
 
     public void spawnMerchant(Tile[][] tiles, int i, int j) {
         Merchant m = new Merchant(i, j, this.tileSize);
         tiles[i][j] = m;
         this.merchantList.add(m);
-        this.maxMerchantCount--;
+        this.currMerchantCount++;
     }
 
     public void spawnOceanTile(Tile[][] tiles, int i, int j) {
         tiles[i][j] = new Tile(i, j, this.tileSize);
     }
 
+    public void reset() {
+        this.currMerchantCount = 0;
+        this.merchantList.clear();
+        this.initializeBoardState();
+        this.addPlayer();
+        this.collisionModal.closeModal();
+    }
+
     @Override
     public void initializeBoardState() {
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[0].length; j++) {
-                boolean shouldMerchantSpawn = ((int)(Math.random() * 100) <= 5) && maxMerchantCount > 0 ;
+                boolean shouldMerchantSpawn = ((int)(Math.random() * 100) <= 5) && currMerchantCount < maxMerchantCount;
                 if (shouldMerchantSpawn) {
                     spawnMerchant(tiles, i, j);
                 } else {
@@ -92,10 +99,6 @@ public class OceanBoard extends Board {
         tiles[toMove.getX()][toMove.getY()] = toMove;
     }
 
-    public boolean getShouldTransitionScene() {
-        return this.shouldTransitionScene;
-    }
-
     public void movePlayer(int xDirection, int yDirection) {
         this.moveMerchants();
         int oldX = player.getX();
@@ -103,7 +106,7 @@ public class OceanBoard extends Board {
         player.move(xDirection, yDirection, this.tiles);
         this.updateItemBoardPos(new int[]{oldX, oldY}, player);
         if (didPlayerCollideWithMerchant()) {
-            this.shouldShowCollidedAlert = true;
+            this.collisionModal.showModal();
         }
     }
 
@@ -111,11 +114,7 @@ public class OceanBoard extends Board {
     public Pane getBoard() {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
-        wrapper.getChildren().addAll(pane);
-        wrapper.getChildren().addAll(modalPane);
-        if (this.shouldShowCollidedAlert) {
-            modalPane.setVisible(true);
-        }
+        wrapper.getChildren().addAll(pane, collisionModal.getPane());
         return wrapper;
     }
 }
