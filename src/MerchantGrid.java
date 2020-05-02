@@ -11,17 +11,18 @@ public class MerchantGrid {
     private HashSet<String> weakPoints;
     private HashSet<String> shipPoints;
     private int tileSize;
-    private double maxHealth = 20;
-    private double currHealth = 20;
+    private double maxHealth = 100;
+    private double currHealth;
     private int maxTurns = 10;
     private HealthBar healthBar;
     private TurnTimer turnTimer;
-    private int goldReward = 10;
+    private static final int GOLD_REWARD = 5;
 
     private Tile[][] tiles;
 
     public MerchantGrid(int numXTiles, int numYTiles, int tileSize) {
         this.tiles = new Tile[numXTiles][numYTiles];
+        this.currHealth = this.maxHealth;
         this.tileSize = tileSize;
         this.weakPoints = new HashSet();
         this.shipPoints = new HashSet();
@@ -135,7 +136,7 @@ public class MerchantGrid {
     }
 
     public int getGoldReward() {
-        return goldReward;
+        return GOLD_REWARD;
     }
 
     public void spawnWeakPoints() {
