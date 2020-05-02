@@ -1,4 +1,3 @@
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -6,19 +5,19 @@ import java.util.Map;
 
 public class SceneManager {
     private Stage stage;
-    private Map<String, Scene> sceneMap;
+    private Map<String, GameScene> sceneMap;
     public SceneManager(Stage stage) {
-        this.sceneMap = new HashMap<String, Scene>();
+        this.sceneMap = new HashMap<String, GameScene>();
         this.stage = stage;
     }
 
     public void addScene(GameScene scene) {
-        this.sceneMap.put(scene.getSceneName(), scene.getScene());
+        this.sceneMap.put(scene.getSceneName(), scene);
     }
 
     public void showScene(String sceneName) {
-        Scene scene = sceneMap.get(sceneName);
-        this.stage.setScene(scene);
+        GameScene gameScene = sceneMap.get(sceneName);
+        this.stage.setScene(gameScene.getScene());
         this.stage.show();
     }
 }

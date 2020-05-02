@@ -1,5 +1,8 @@
+import Callbacks.Callback;
+import Tiles.Tile;
 import UIElements.HealthBar;
 import UIElements.Modal;
+import UIElements.TurnTimer;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -10,9 +13,11 @@ public class BattleBoard extends Board {
     private Reticle reticle;
     private Modal alertModal;
     private Modal victoryModal;
+    private Modal defeatModal;
     private HealthBar healthBar;
     private Callback onGoToOverworldScene;
     private Callback updateCallback;
+    private TurnTimer turnTimer;
 
 
     public BattleBoard(int numXTiles, int numYTiles, int tileSize, Callback onGoToOverworldScene) {
@@ -27,15 +32,17 @@ public class BattleBoard extends Board {
     public Pane getBoard() {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
-        wrapper.getChildren().addAll(pane, healthBar.getPane(), alertModal.getPane(), victoryModal.getPane());
+        wrapper.getChildren().addAll(pane, healthBar.getPane(), turnTimer.getPane(), alertModal.getPane(), victoryModal.getPane(), defeatModal.getPane());
         return wrapper;
     }
 
     @Override
     public void initializeBoardState() {
+        defeatModal = new Modal();
         alertModal = new Modal();
         victoryModal = new Modal();
         healthBar = merchantGrid.getHealthBar();
+        turnTimer = merchantGrid.getTurnTimer();
         Tile[][] merchantTiles = merchantGrid.getBoardState();
         reticle = new Reticle(merchantTiles);
         this.tiles = merchantTiles;
@@ -62,10 +69,25 @@ public class BattleBoard extends Board {
                 alertModal.closeModal();
                 merchantGrid.takeDamage(target);
                 merchantGrid.spawnWeakPoints();
+                merchantGrid.decrementShots();
                 if (!merchantGrid.isDead()) {
-                    resetReticles();
-                    updateCallback.execute();
+                    if (merchantGrid.hasNoRemainingShots()) {
+                        showOnDefeatModal();
+                    } else {
+                        resetReticles();
+                        updateCallback.execute();
+                    }
                 }
+            }
+        });
+    }
+
+    public void showOnDefeatModal() {
+        defeatModal.showModal("You ran out of shots!", "OK", new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                resetBoard();
+                onGoToOverworldScene.execute();
             }
         });
     }
@@ -82,6 +104,7 @@ public class BattleBoard extends Board {
 
     public void resetBoard() {
         victoryModal.closeModal();
+        defeatModal.closeModal();
         merchantGrid.reset();
         Tile[][] merchantTiles = merchantGrid.getBoardState();
         reticle = new Reticle(merchantTiles);

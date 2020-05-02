@@ -1,3 +1,4 @@
+import Callbacks.Callback;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -24,6 +25,10 @@ public class OverworldScene extends GameScene {
                 update();
             }
         });
+    }
+
+    public void addGold(int gold) {
+        System.out.println("Player earned " + gold + " Gold!");
     }
 
     private Pane renderBoard() {

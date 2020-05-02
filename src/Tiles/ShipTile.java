@@ -1,11 +1,13 @@
+package Tiles;
+
 import javafx.scene.image.ImageView;
 
-public class Ship extends Tile {
-    public Ship(int x, int y, int tileSize, String imageUrl) {
+public class ShipTile extends Tile {
+    public ShipTile(int x, int y, int tileSize, String imageUrl) {
         this(x, y, tileSize, imageUrl, "Ship");
     }
 
-    public Ship(int x, int y, int tileSize, String imageUrl, String type) {
+    public ShipTile(int x, int y, int tileSize, String imageUrl, String type) {
         super(x, y, tileSize, type);
         ImageView imageView = new ImageView(imageUrl);
         pane.getChildren().addAll(imageView);

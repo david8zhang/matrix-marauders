@@ -1,3 +1,4 @@
+import Tiles.Tile;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;

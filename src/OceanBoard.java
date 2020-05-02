@@ -1,3 +1,7 @@
+import Callbacks.Callback;
+import Tiles.MerchantTile;
+import Tiles.PlayerTile;
+import Tiles.Tile;
 import UIElements.Modal;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -8,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OceanBoard extends Board {
-    private Player player;
+    private PlayerTile playerTile;
     private int maxMerchantCount = 3;
     private int currMerchantCount = 0;
-    private List<Merchant> merchantList = new ArrayList<>();
+    private List<MerchantTile> merchantTileList = new ArrayList<>();
     private Modal collisionModal;
 
     public OceanBoard(int numXTiles, int numYTiles, int tileSize, Callback cmd) {
@@ -27,9 +31,9 @@ public class OceanBoard extends Board {
     }
 
     public void spawnMerchant(Tile[][] tiles, int i, int j) {
-        Merchant m = new Merchant(i, j, this.tileSize);
+        MerchantTile m = new MerchantTile(i, j, this.tileSize);
         tiles[i][j] = m;
-        this.merchantList.add(m);
+        this.merchantTileList.add(m);
         this.currMerchantCount++;
     }
 
@@ -39,7 +43,7 @@ public class OceanBoard extends Board {
 
     public void reset() {
         this.currMerchantCount = 0;
-        this.merchantList.clear();
+        this.merchantTileList.clear();
         this.initializeBoardState();
         this.addPlayer();
         this.collisionModal.closeModal();
@@ -62,13 +66,13 @@ public class OceanBoard extends Board {
     public void addPlayer() {
         int randX = (int)(Math.random() * tiles.length);
         int randY = (int)(Math.random() * tiles[0].length);
-        Player player = new Player(randX, randY, this.tileSize);
-        tiles[randX][randY] = new Player(randX, randY, this.tileSize);
-        this.player = player;
+        PlayerTile playerTile = new PlayerTile(randX, randY, this.tileSize);
+        tiles[randX][randY] = new PlayerTile(randX, randY, this.tileSize);
+        this.playerTile = playerTile;
     }
 
     public void moveMerchants() {
-        for (Merchant m : this.merchantList) {
+        for (MerchantTile m : this.merchantTileList) {
             int oldX = m.getX();
             int oldY = m.getY();
             boolean shouldMove = (int)((Math.random() * 100) + 1) <= 50;
@@ -80,9 +84,9 @@ public class OceanBoard extends Board {
     }
 
     public boolean didPlayerCollideWithMerchant() {
-        int playerX = player.getX();
-        int playerY = player.getY();
-        for (Merchant m : this.merchantList) {
+        int playerX = playerTile.getX();
+        int playerY = playerTile.getY();
+        for (MerchantTile m : this.merchantTileList) {
             int merchantX = m.getX();
             int merchantY = m.getY();
             if (merchantX == playerX && merchantY == playerY) {
@@ -101,10 +105,10 @@ public class OceanBoard extends Board {
 
     public void movePlayer(int xDirection, int yDirection) {
         this.moveMerchants();
-        int oldX = player.getX();
-        int oldY = player.getY();
-        player.move(xDirection, yDirection, this.tiles);
-        this.updateItemBoardPos(new int[]{oldX, oldY}, player);
+        int oldX = playerTile.getX();
+        int oldY = playerTile.getY();
+        playerTile.move(xDirection, yDirection, this.tiles);
+        this.updateItemBoardPos(new int[]{oldX, oldY}, playerTile);
         if (didPlayerCollideWithMerchant()) {
             this.collisionModal.showModal();
         }

@@ -1,7 +1,10 @@
+import Callbacks.Callback;
+import Tiles.ShipPixel;
+import Tiles.Tile;
 import UIElements.HealthBar;
+import UIElements.TurnTimer;
 import javafx.scene.paint.Color;
 import java.util.HashSet;
-import java.util.Set;
 
 public class MerchantGrid {
     int[][][] sails = new int[][][] {
@@ -76,6 +79,7 @@ public class MerchantGrid {
     private double currHealth = 20;
     private Callback onVictory;
     private HealthBar healthBar;
+    private TurnTimer turnTimer;
 
     private Tile[][] tiles;
 
@@ -85,6 +89,7 @@ public class MerchantGrid {
         this.weakPoints = new HashSet();
         this.shipPoints = new HashSet();
         this.healthBar = new HealthBar(this.maxHealth, this.currHealth, "Merchant Health");
+        this.turnTimer = new TurnTimer(10, "Remaining Shots: ");
         this.onVictory = onVictory;
         this.initMerchantBoard();
     }
@@ -120,6 +125,18 @@ public class MerchantGrid {
         } else {
             return 1;
         }
+    }
+
+    public void decrementShots() {
+        turnTimer.decrementTurns();
+    }
+
+    public TurnTimer getTurnTimer() {
+        return turnTimer;
+    }
+
+    public boolean hasNoRemainingShots() {
+        return this.turnTimer.hasNoRemainingTurns();
     }
 
     public boolean isMissed(int[] target) {
@@ -166,7 +183,7 @@ public class MerchantGrid {
 
     public void spawnShipTile(int j, int i, int[] pixel) {
         Color tileColor = Color.rgb(pixel[0], pixel[1], pixel[2], getOpacity(pixel));
-        this.tiles[j][i] = new ShipTile(j, i, this.tileSize, tileColor);
+        this.tiles[j][i] = new ShipPixel(j, i, this.tileSize, tileColor);
         this.shipPoints.add(stringifyCoordinates(new int[] { j, i }));
     }
 

@@ -1,10 +1,12 @@
+package Tiles;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Merchant extends Ship {
-    public Merchant(int x, int y, int tileSize) {
+public class MerchantTile extends ShipTile {
+    public MerchantTile(int x, int y, int tileSize) {
         super(x, y, tileSize, "https://firebasestorage.googleapis.com/v0/b/matrix-marauders.appspot.com/o/merchant-ship.png?alt=media&token=d6f22220-12d1-4d79-b1da-4345d046befb");
     }
 

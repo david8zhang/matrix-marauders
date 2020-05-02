@@ -1,3 +1,4 @@
+import Tiles.Tile;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
