@@ -2,6 +2,7 @@ import Callbacks.Callback;
 import Tiles.MerchantTile;
 import Tiles.PlayerTile;
 import Tiles.Tile;
+import UIElements.GoldCounter;
 import UIElements.Modal;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -17,11 +18,13 @@ public class OceanBoard extends Board {
     private int currMerchantCount = 0;
     private List<MerchantTile> merchantTileList = new ArrayList<>();
     private Modal collisionModal;
+    private GoldCounter goldCounter;
 
     public OceanBoard(int numXTiles, int numYTiles, int tileSize, Callback cmd) {
         super(numXTiles, numYTiles, tileSize);
         this.initializeBoardState();
         this.addPlayer();
+        goldCounter = PlayerMetadata.getInstance().getGoldCounter();
         collisionModal = new Modal("You have collided with a merchant!", "Go to battle!", new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -118,7 +121,7 @@ public class OceanBoard extends Board {
     public Pane getBoard() {
         StackPane wrapper = new StackPane();
         Pane pane = super.getBoard();
-        wrapper.getChildren().addAll(pane, collisionModal.getPane());
+        wrapper.getChildren().addAll(pane, goldCounter.getPane(), collisionModal.getPane());
         return wrapper;
     }
 }

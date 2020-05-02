@@ -53,12 +53,13 @@ public class BattleBoard extends Board {
     }
 
     public void initMerchantGrid() {
-        merchantGrid = new MerchantGrid(numXTiles, numYTiles, tileSize, new Callback() {
-            @Override
-            public void execute() {
-                showOnVictoryModal();
-            }
-        });
+        merchantGrid = new MerchantGrid(numXTiles, numYTiles, tileSize);
+    }
+
+    private void handleVictory() {
+        PlayerMetadata pm = PlayerMetadata.getInstance();
+        pm.addGold(merchantGrid.getGoldReward());
+        showOnVictoryModal();
     }
 
     public void showDamageModal(int[] target) {
@@ -68,12 +69,14 @@ public class BattleBoard extends Board {
             public void handle(MouseEvent mouseEvent) {
                 alertModal.closeModal();
                 merchantGrid.takeDamage(target);
-                merchantGrid.spawnWeakPoints();
-                merchantGrid.decrementShots();
-                if (!merchantGrid.isDead()) {
+                if (merchantGrid.isDead()) {
+                    handleVictory();
+                } else {
                     if (merchantGrid.hasNoRemainingShots()) {
                         showOnDefeatModal();
                     } else {
+                        merchantGrid.spawnWeakPoints();
+                        merchantGrid.decrementShots();
                         resetReticles();
                         updateCallback.execute();
                     }
@@ -93,7 +96,8 @@ public class BattleBoard extends Board {
     }
 
     public void showOnVictoryModal() {
-        victoryModal.showModal("You defeated the merchant ship!", "OK", new EventHandler<MouseEvent>() {
+        String message = String.format("You defeated the merchant ship and earned %d Gold", merchantGrid.getGoldReward());
+        victoryModal.showModal(message, "OK", new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 resetBoard();

@@ -9,9 +9,6 @@ import javafx.scene.paint.Paint;
 
 public class TurnTimer {
     private StackPane pane;
-    private static final int HEALTH_BAR_WIDTH = 30;
-    private static final int HEALTH_BAR_LENGTH = 200;
-
     private static final int WINDOW_WIDTH = 200;
     private static final int WINDOW_LENGTH = 50;
 
@@ -34,6 +31,11 @@ public class TurnTimer {
 
         pane.getChildren().addAll(parent);
         pane.setAlignment(Pos.TOP_RIGHT);
+    }
+
+    public void setNumTurns(int numTurns) {
+        this.numTurns = numTurns;
+        this.turnTextLabel.setText(turnText + this.numTurns);
     }
 
     public void decrementTurns() {
